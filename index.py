@@ -5,22 +5,22 @@ from openpyxl.chart import BarChart,Reference
 url="https://www.google.com/search?q=weatherSantos"
 html = requests.get(url).content
 soup = BeautifulSoup(html, 'html.parser')
-temp = soup.find('div', attrs={'class': 'BNeawe iBp4i AP7Wnd'}).text
+temp = (soup.find('div', attrs={'class': 'BNeawe iBp4i AP7Wnd'}).text).split('°')[0]
 str = soup.find('div', attrs={'class': 'BNeawe tAd8D AP7Wnd'}).text
-tempInt=temp.split("°")
-tempetura=tempInt[0]
 data = str.split('\n')
 time = data[0]
-print(f"Temperatura:{tempetura}\nData e hora:{time}")
+print(f"Temperatura:{temp}°C\nData e hora:{time}")
 try:
     wb=openpyxl.load_workbook('Test.xlsx')
     ws=wb.active
-    ws.append([int(tempetura),time])
+    ws.append([int(temp),time])
 except:
     wb=openpyxl.Workbook()
     ws=wb.active
-    ws['A1']=int(tempetura)
-    ws['B1']=time
+    ws['A1']='temperatura'
+    ws['A2']=int(temp)
+    ws['B1']='Horário'
+    ws['B2']=time
 if ws._charts:
     ws._charts.clear()
 chart=BarChart()
@@ -32,7 +32,7 @@ data=Reference(
     ws,
     min_col=1,
     min_row=1,
-    max_col=2,
+    #max_col=2,
     max_row=linhas
 )
 cats = Reference(ws, min_col=2, min_row=1, max_row=linhas)
