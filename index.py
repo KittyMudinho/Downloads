@@ -1,14 +1,15 @@
 from bs4 import BeautifulSoup
+import datetime
 import requests
 import openpyxl
 from openpyxl.chart import BarChart,Reference
 url="https://www.google.com/search?q=weatherSantos"
 html = requests.get(url).content
 soup = BeautifulSoup(html, 'html.parser')
-temp = (soup.find('div', attrs={'class': 'BNeawe iBp4i AP7Wnd'}).text).split('°')[0]
-str = soup.find('div', attrs={'class': 'BNeawe tAd8D AP7Wnd'}).text
+temp = (soup.find('div', attrs={'class': 'BNeawe s3v9rd AP7Wnd'}).text).split('de ')[2].split('°')[0]
+str = soup.find('div', attrs={'class': 'BNeawe s3v9rd AP7Wnd'}).text
 data = str.split('\n')
-time = data[0]
+time = datetime.datetime.now()
 print(f"Temperatura:{temp}°C\nData e hora:{time}")
 try:
     wb=openpyxl.load_workbook('Test.xlsx')
