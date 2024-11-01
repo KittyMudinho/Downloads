@@ -1,14 +1,15 @@
 from bs4 import BeautifulSoup
+import pandas as pd
 import datetime
 import requests
 import openpyxl
 from openpyxl.chart import BarChart,Reference
-url="https://www.google.com/search?q=weatherSantos"
+import plotly.express as px
+cidade=input('Diga a cidade que deseja saber a temperatura (Say the city you wish to know the temperature): ')
+url=f'https://www.google.com/search?q=weather{cidade}'
 html = requests.get(url).content
 soup = BeautifulSoup(html, 'html.parser')
-temp = (soup.find('div', attrs={'class': 'BNeawe s3v9rd AP7Wnd'}).text).split('de ')[2].split('°')[0]
-str = soup.find('div', attrs={'class': 'BNeawe s3v9rd AP7Wnd'}).text
-data = str.split('\n')
+temp = (soup.find('div', attrs={'class': 'BNeawe s3v9rd AP7Wnd'}).text.split('°C')[0].split('de ')[1])
 time = datetime.datetime.now()
 print(f"Temperatura:{temp}°C\nData e hora:{time}")
 try:
@@ -22,23 +23,7 @@ except:
     ws['A2']=int(temp)
     ws['B1']='Horário'
     ws['B2']=time
-if ws._charts:
-    ws._charts.clear()
-chart=BarChart()
-chart.title =  "Temperatura e horário"
-chart.y_axis.title = "Temperatura"
-chart.x_axis.title = "Horário"
-linhas = len([row for row in ws if not all([cell.value == None for cell in row])])
-data=Reference(
-    ws,
-    min_col=1,
-    min_row=1,
-    #max_col=2,
-    max_row=linhas
-)
-cats = Reference(ws, min_col=2, min_row=1, max_row=linhas)
-chart.add_data(data, titles_from_data=True)
-chart.set_categories(cats)
-chart.legend=None
-ws.add_chart(chart,"H2")
 wb.save('Test.xlsx')
+arquivo=pd.read_excel('Test.xlsx')
+grafico=px.bar(arquivo,x='Horário', y='temperatura')
+grafico.show()
