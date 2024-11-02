@@ -1,25 +1,23 @@
-from bs4 import BeautifulSoup
 import pandas as pd
-import datetime
+import json
 import requests
 import openpyxl
 import plotly.express as px
-cidade=input('Diga a cidade que deseja saber a temperatura (Say the city you wish to know the temperature): ')
-url=f'https://www.google.com/search?q=weather{cidade}'
-html = requests.get(url).content
-soup = BeautifulSoup(html, 'html.parser')
-temp = (soup.find('div', attrs={'class': 'BNeawe s3v9rd AP7Wnd'}).text.split('°C')[0].split('de ')[1])
-time = datetime.datetime.now()
+#cidade=input('Diga a cidade que deseja saber a temperatura (Say the city you wish to know the temperature): ')
+key='9a40fecccf7d49d1935151140240211'
+request=json.loads(requests.get(f'http://api.weatherapi.com/v1/current.json?key={key}&q=Santos&aqi=no').content.decode('utf-8'))
+time=request['location']['localtime']
+temp=float(request['current']['temp_c'])
 print(f"Temperatura:{temp}°C\nData e hora:{time}")
 try:
     wb=openpyxl.load_workbook('Test.xlsx')
     ws=wb.active
-    ws.append([int(temp),time])
+    ws.append([temp,time])
 except:
     wb=openpyxl.Workbook()
     ws=wb.active
     ws['A1']='temperatura'
-    ws['A2']=int(temp)
+    ws['A2']=temp
     ws['B1']='Horário'
     ws['B2']=time
 wb.save('Test.xlsx')
