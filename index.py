@@ -3,7 +3,6 @@ import pandas as pd
 import datetime
 import requests
 import openpyxl
-from openpyxl.chart import BarChart,Reference
 import plotly.express as px
 cidade=input('Diga a cidade que deseja saber a temperatura (Say the city you wish to know the temperature): ')
 url=f'https://www.google.com/search?q=weather{cidade}'
